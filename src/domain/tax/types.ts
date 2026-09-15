@@ -1,7 +1,70 @@
-export type Money = string
-export interface Child { id: string; birthDate: string; hasSeparateIncome: boolean; higherEducation: boolean; receivesScholarship: boolean; disabled: boolean }
-export interface ParentAtCharge { eligible: boolean; incomeBelowThreshold: boolean; supportShare: number }
-export interface DeductionFacts { universityLoanPaid?: Money; nonSalariedSocialContributions?: Money; housing?: { costExVat: Money; alreadyOwnedResidence: boolean; annualInterest: Money; financing: 'loan' | 'murabaha' }; lifeInsurance?: { annualPremium: Money; qualifyingDurationYears: number } }
-export interface TaxpayerInput { year: 2026; unsupportedIncome: boolean; identity: { cin: string; fullName: string; birthDate: string; address: string; postalCode: string; profession: string }; salaryBase: Money; professionalAbatement: Money; irppWithheld: Money; cssWithheld: Money; family: { chefEligible: boolean; children: Child[]; parents: ParentAtCharge[] }; deductions: DeductionFacts }
-export interface BracketResult { from: string; to: string | null; taxableAmount: Money; rate: Money; tax: Money }
-export interface TaxResult { status: 'ready' | 'verification-required' | 'blocked'; professionalExpenses: Money; chefDeduction: Money; childDeductionBreakdown: Money[]; childrenDeductions: Money; familyDeductions: Money; parentDeductions: Money; commonDeductions: Money; totalDeductions: Money; taxableIncome: Money; roundedTaxableIncome: Money; irppDue: Money; cssDue: Money; irppBalance: Money; cssBalance: Money; totalBalance: Money; brackets: BracketResult[]; warnings: string[] }
+export type Money = string;
+export interface Child {
+  id: string;
+  birthDate: string;
+  hasSeparateIncome: boolean;
+  higherEducation: boolean;
+  receivesScholarship: boolean;
+  disabled: boolean;
+}
+export interface ParentAtCharge {
+  eligible: boolean;
+  incomeBelowThreshold: boolean;
+  supportShare: number;
+}
+export interface DeductionFacts {
+  universityLoanPaid?: Money;
+  nonSalariedSocialContributions?: Money;
+  housing?: {
+    costExVat: Money;
+    alreadyOwnedResidence: boolean;
+    annualInterest: Money;
+    financing: 'loan' | 'murabaha';
+  };
+  lifeInsurance?: { annualPremium: Money; qualifyingDurationYears: number };
+}
+export interface TaxpayerInput {
+  year: 2026;
+  unsupportedIncome: boolean;
+  identity: {
+    cin: string;
+    fullName: string;
+    birthDate: string;
+    address: string;
+    postalCode: string;
+    profession: string;
+  };
+  salaryBase: Money;
+  professionalAbatement: Money;
+  irppWithheld: Money;
+  cssWithheld: Money;
+  family: { chefEligible: boolean; children: Child[]; parents: ParentAtCharge[] };
+  deductions: DeductionFacts;
+}
+export interface BracketResult {
+  from: string;
+  to: string | null;
+  taxableAmount: Money;
+  rate: Money;
+  tax: Money;
+}
+export interface TaxResult {
+  status: 'ready' | 'verification-required' | 'blocked';
+  professionalExpenses: Money;
+  chefDeduction: Money;
+  childDeductionBreakdown: Money[];
+  childrenDeductions: Money;
+  familyDeductions: Money;
+  parentDeductions: Money;
+  commonDeductions: Money;
+  totalDeductions: Money;
+  taxableIncome: Money;
+  roundedTaxableIncome: Money;
+  irppDue: Money;
+  cssDue: Money;
+  irppBalance: Money;
+  cssBalance: Money;
+  totalBalance: Money;
+  brackets: BracketResult[];
+  warnings: string[];
+}

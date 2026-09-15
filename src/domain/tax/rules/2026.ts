@@ -1,6 +1,48 @@
 export const TAX_RULES_2026 = {
   year: 2026,
-  professionalExpenseRate: '0.10', professionalExpenseCap: '2000', chefDeduction: '300', childDeduction: '100', studentDeduction: '1000', disabledChildDeduction: '2000', parentCap: '450', parentRate: '0.05', housingCostCap: '200000', lifeInsuranceCap: '100000', cssRate: '0.005', cssExemptionThreshold: '5000',
-  brackets: [{ upTo: '5000', rate: '0' }, { upTo: '10000', rate: '0.15' }, { upTo: '20000', rate: '0.25' }, { upTo: '30000', rate: '0.30' }, { upTo: '40000', rate: '0.33' }, { upTo: '50000', rate: '0.36' }, { upTo: '70000', rate: '0.38' }, { upTo: null, rate: '0.40' }],
-  metadata: { verifiedAt: '2026-09-13', sources: [{ id: 'IRPP_2026_ARTICLE_26', authority: 'JIBAYA / Ministère des Finances Tunisie', document: 'Code de l’IRPP et de l’IS', article: '26' }, { id: 'IRPP_2026_ARTICLE_39_40_44', authority: 'JIBAYA / Ministère des Finances Tunisie', document: 'Code de l’IRPP et de l’IS', article: '39, 40, 44' }, { id: 'CSS_2026', authority: 'Ministère des Finances Tunisie', document: 'Loi de finances 2026 / Note Commune N°01', article: 'CSS' }] }
-} as const
+  professionalExpenseRate: '0.10',
+  professionalExpenseCap: '2000',
+  chefDeduction: '300',
+  childDeduction: '100',
+  studentDeduction: '1000',
+  disabledChildDeduction: '2000',
+  parentCap: '450',
+  parentRate: '0.05',
+  housingCostCap: '200000',
+  lifeInsuranceCap: '100000',
+  cssRate: '0.005',
+  cssExemptionThreshold: '5000',
+  brackets: [
+    { upTo: '5000', rate: '0' },
+    { upTo: '10000', rate: '0.15' },
+    { upTo: '20000', rate: '0.25' },
+    { upTo: '30000', rate: '0.30' },
+    { upTo: '40000', rate: '0.33' },
+    { upTo: '50000', rate: '0.36' },
+    { upTo: '70000', rate: '0.38' },
+    { upTo: null, rate: '0.40' },
+  ],
+  metadata: {
+    verifiedAt: '2026-09-13',
+    sources: [
+      {
+        id: 'IRPP_2026_ARTICLE_26',
+        authority: 'JIBAYA / Ministère des Finances Tunisie',
+        document: 'Code de l’IRPP et de l’IS',
+        article: '26',
+      },
+      {
+        id: 'IRPP_2026_ARTICLE_39_40_44',
+        authority: 'JIBAYA / Ministère des Finances Tunisie',
+        document: 'Code de l’IRPP et de l’IS',
+        article: '39, 40, 44',
+      },
+      {
+        id: 'CSS_2026',
+        authority: 'Ministère des Finances Tunisie',
+        document: 'Loi de finances 2026 / Note Commune N°01',
+        article: 'CSS',
+      },
+    ],
+  },
+} as const;
