@@ -5,7 +5,7 @@ export interface CellPatch {
   cell: string;
   value: string | null;
   kind: 'string' | 'number';
-  /** Deliberate override for an engine-owned formula cell; unused by this template mapping. */
+  /** Deliberate override for an engine-owned formula cell when the template requires a manual value. */
   replaceFormula?: boolean;
 }
 
@@ -22,6 +22,7 @@ export function declarationPatches(input: TaxpayerInput, result: TaxResult): Cel
   const birth = input.identity.birthDate.split('-');
   const cinCells = ['E8', 'F8', 'G8', 'H8', 'I8', 'J8', 'K8', 'L8'];
   const childFlagCells = ['G3', 'G4', 'G7', 'G8'];
+  const childAmountCells = ['H3', 'H4', 'H7', 'H8'];
   const out: CellPatch[] = [
     { sheet: declaration, cell: 'D4', value: '2026', kind: 'number' },
     { sheet: declaration, cell: 'T16', value: 'X', kind: 'string' },
@@ -81,13 +82,25 @@ export function declarationPatches(input: TaxpayerInput, result: TaxResult): Cel
     { sheet: declaration, cell: 'N359', value: input.cssWithheld, kind: 'number' },
   ];
 
-  input.family.children.slice(0, 4).forEach((child, index) => {
-    const eligible = result.childDeductionBreakdown[index] !== '0.000';
+  input.family.children.slice(0, 4).forEach((_, index) => {
     out.push({
       sheet: detail,
       cell: childFlagCells[index],
-      value: eligible ? '1' : '0',
+      // The template's child fields are presence flags ("1 si oui").
+      // Each declared child must therefore be marked as present independently
+      // of the frontend deduction amount.
+      value: '1',
       kind: 'number',
+    });
+    out.push({
+      sheet: detail,
+      cell: childAmountCells[index],
+      // The reference template hard-codes 100 DT with a formula. These cells
+      // deliberately become manual values so student, disabled, and
+      // non-eligible child statuses match the frontend calculation.
+      value: result.childDeductionBreakdown[index] ?? '0.000',
+      kind: 'number',
+      replaceFormula: true,
     });
   });
   split(input.identity.cin).forEach((digit, index) =>

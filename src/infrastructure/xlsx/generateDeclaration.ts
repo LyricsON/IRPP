@@ -44,6 +44,30 @@ function requestFullRecalculation(workbookXml: string) {
     '<calcPr fullCalcOnLoad="1" forceFullCalc="1"/></workbook>'
   );
 }
+
+/**
+ * Excel stores a separate cache of formula-cell references. When a template
+ * formula deliberately becomes a manual value, keeping its old calcChain
+ * entry can make Excel refuse to open the generated workbook. Removing the
+ * cache is safe: Excel recreates it from the remaining formulas on open.
+ */
+async function removeStaleCalculationChain(zip: JSZip) {
+  zip.remove('xl/calcChain.xml');
+
+  const relationships = await zip.file('xl/_rels/workbook.xml.rels')?.async('string');
+  if (relationships)
+    zip.file(
+      'xl/_rels/workbook.xml.rels',
+      relationships.replace(/<Relationship\b[^>]*Type="[^"]*\/calcChain"[^>]*\/>/i, '')
+    );
+
+  const contentTypes = await zip.file('[Content_Types].xml')?.async('string');
+  if (contentTypes)
+    zip.file(
+      '[Content_Types].xml',
+      contentTypes.replace(/<Override\b[^>]*PartName="\/xl\/calcChain\.xml"[^>]*\/>/i, '')
+    );
+}
 function setCell(
   xml: string,
   cellRef: string,
@@ -94,6 +118,9 @@ export async function generateDeclaration(input: TaxpayerInput, result: TaxResul
   const bySheet = new Map<string, CellPatch[]>();
   for (const patch of declarationPatches(input, result))
     bySheet.set(patch.sheet, [...(bySheet.get(patch.sheet) ?? []), patch]);
+  const replacesTemplateFormula = [...bySheet.values()].some((patches) =>
+    patches.some((patch) => patch.replaceFormula)
+  );
   for (const [sheet, patches] of bySheet) {
     const path = sheetPath(workbook, relationships, sheet);
     let xml = await zip.file(path)?.async('string');
@@ -104,5 +131,6 @@ export async function generateDeclaration(input: TaxpayerInput, result: TaxResul
     zip.file(path, xml);
   }
   zip.file('xl/workbook.xml', requestFullRecalculation(workbookXml));
+  if (replacesTemplateFormula) await removeStaleCalculationChain(zip);
   return zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
 }
