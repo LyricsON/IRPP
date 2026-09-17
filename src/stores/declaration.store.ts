@@ -8,7 +8,7 @@ const blank = (): TaxpayerInput => ({
   unsupportedIncome: false,
   identity: { cin: '', fullName: '', birthDate: '', address: '', postalCode: '', profession: '' },
   salaryBase: '0',
-  professionalAbatement: '0',
+  professionalAbatement: '2000.000',
   irppWithheld: '0',
   cssWithheld: '0',
   family: { chefEligible: false, children: [], parents: [] },
