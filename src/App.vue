@@ -43,9 +43,10 @@ const copy = {
     addChild: 'Ajouter un enfant',
     noChildren: 'Ajoutez uniquement les enfants susceptibles d’être à charge.',
     child: 'Enfant',
+    childHint: 'Sélectionnez uniquement la situation fiscale applicable.',
+    underTwenty: 'Moins de 20 ans',
+    studentUnderTwentyFiveNoScholarship: 'Étudiant de moins de 25 ans, non boursier',
     ownIncome: 'Revenus propres',
-    higherEducation: 'Études supérieures',
-    scholarship: 'Boursier',
     disabled: 'Enfant handicapé',
     remove: 'Retirer',
     income: 'Revenus et retenues',
@@ -113,9 +114,10 @@ const copy = {
     addChild: 'إضافة ابن',
     noChildren: 'أضف فقط الأبناء الذين يمكن اعتبارهم في الكفالة.',
     child: 'الابن',
+    childHint: 'اختر فقط الوضعية الجبائية المنطبقة.',
+    underTwenty: 'العمر أقل من 20 سنة',
+    studentUnderTwentyFiveNoScholarship: 'طالب أقل من 25 سنة وغير متحصل على منحة',
     ownIncome: 'له مداخيل خاصة',
-    higherEducation: 'تعليم عالٍ',
-    scholarship: 'يتحصل على منحة',
     disabled: 'ابن حامل لإعاقة',
     remove: 'حذف',
     income: 'المداخيل والخصم',
@@ -164,6 +166,7 @@ const calendarLocale = computed(() => (locale.value === 'ar' ? ar : fr));
 const calendarDayNames = computed<string[] | undefined>(() =>
   locale.value === 'ar' ? ['أح', 'اث', 'ثل', 'أر', 'خم', 'جم', 'سب'] : undefined
 );
+const canAddChild = computed(() => store.data.family.children.length < 4);
 const canNext = computed(
   () =>
     step.value !== 1 ||
@@ -176,12 +179,12 @@ const canNext = computed(
 );
 
 function addChild() {
+  if (!canAddChild.value) return;
   store.data.family.children.push({
     id: crypto.randomUUID(),
-    birthDate: '',
+    underTwenty: false,
+    studentUnderTwentyFiveNoScholarship: false,
     hasSeparateIncome: false,
-    higherEducation: false,
-    receivesScholarship: false,
     disabled: false,
   });
 }
@@ -338,7 +341,9 @@ async function downloadPdf() {
         >
         <div class="section-heading">
           <h3>{{ t.children }}</h3>
-          <button class="text-button" @click="addChild">+ {{ t.addChild }}</button>
+          <button class="text-button" :disabled="!canAddChild" @click="addChild">
+            + {{ t.addChild }}
+          </button>
         </div>
         <p v-if="!store.data.family.children.length" class="muted">{{ t.noChildren }}</p>
         <article
@@ -346,34 +351,20 @@ async function downloadPdf() {
           :key="child.id"
           class="child-card"
         >
-          <strong>{{ t.child }} {{ index + 1 }}</strong
-          ><label class="date-field"
-            >{{ t.birthDate
-            }}<VueDatePicker
-              v-model="child.birthDate"
-              class="app-date-picker"
-              model-type="yyyy-MM-dd"
-              :formats="{ input: 'dd/MM/yyyy' }"
-              :locale="calendarLocale"
-              :day-names="calendarDayNames"
-              :week-start="locale === 'ar' ? 6 : 1"
-              :max-date="today"
-              :time-picker="false"
-              :time-config="{ enableTimePicker: false }"
-              :clearable="false"
-              :teleport="false"
-              auto-apply
-          /></label>
-          <div class="checks">
+          <div class="child-summary">
+            <strong>{{ t.child }} {{ index + 1 }}</strong>
+            <span>{{ t.childHint }}</span>
+          </div>
+          <div class="checks child-eligibility">
+            <label><input v-model="child.underTwenty" type="checkbox" /> {{ t.underTwenty }}</label>
+            <label
+              ><input v-model="child.studentUnderTwentyFiveNoScholarship" type="checkbox" />
+              {{ t.studentUnderTwentyFiveNoScholarship }}</label
+            >
+            <label><input v-model="child.disabled" type="checkbox" /> {{ t.disabled }}</label>
             <label
               ><input v-model="child.hasSeparateIncome" type="checkbox" /> {{ t.ownIncome }}</label
-            ><label
-              ><input v-model="child.higherEducation" type="checkbox" />
-              {{ t.higherEducation }}</label
-            ><label
-              ><input v-model="child.receivesScholarship" type="checkbox" />
-              {{ t.scholarship }}</label
-            ><label><input v-model="child.disabled" type="checkbox" /> {{ t.disabled }}</label>
+            >
           </div>
           <button class="remove-button" @click="store.data.family.children.splice(index, 1)">
             {{ t.remove }}

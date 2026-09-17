@@ -1,10 +1,9 @@
 export type Money = string;
 export interface Child {
   id: string;
-  birthDate: string;
+  underTwenty: boolean;
+  studentUnderTwentyFiveNoScholarship: boolean;
   hasSeparateIncome: boolean;
-  higherEducation: boolean;
-  receivesScholarship: boolean;
   disabled: boolean;
 }
 export interface ParentAtCharge {

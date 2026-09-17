@@ -5,18 +5,12 @@ import type { Child, TaxpayerInput, TaxResult, BracketResult } from './types';
 Decimal.set({ precision: 28, rounding: Decimal.ROUND_HALF_UP });
 const d = (value: string | undefined) => new Decimal(value ?? '0');
 const money = (value: Decimal) => value.toDecimalPlaces(3, Decimal.ROUND_HALF_UP).toFixed(3);
-const ageOnJan1 = (birthDate: string) => {
-  const birthday = new Date(`${birthDate}T00:00:00Z`);
-  const afterJanuaryFirst =
-    birthday.getUTCMonth() > 0 || (birthday.getUTCMonth() === 0 && birthday.getUTCDate() > 1);
-  return 2026 - birthday.getUTCFullYear() - (afterJanuaryFirst ? 1 : 0);
-};
 const childDeduction = (child: Child) => {
   if (child.hasSeparateIncome) return d('0');
   if (child.disabled) return d(R.disabledChildDeduction);
-  if (child.higherEducation && !child.receivesScholarship && ageOnJan1(child.birthDate) < 25)
+  if (child.studentUnderTwentyFiveNoScholarship)
     return d(R.studentDeduction);
-  return ageOnJan1(child.birthDate) < 20 ? d(R.childDeduction) : d('0');
+  return child.underTwenty ? d(R.childDeduction) : d('0');
 };
 
 export function calculateTax2026(input: TaxpayerInput): TaxResult {

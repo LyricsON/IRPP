@@ -98,6 +98,10 @@ button {
   font-weight: 700;
   cursor: pointer;
 }
+.text-button:disabled {
+  color: #89a19d;
+  cursor: not-allowed;
+}
 .remove-button {
   color: #b24431;
 }
@@ -326,7 +330,7 @@ input:not([type='checkbox']):focus {
 }
 .child-card {
   display: grid;
-  grid-template-columns: minmax(110px, 0.5fr) minmax(160px, 0.8fr) 2fr auto;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(0, 2.6fr) auto;
   align-items: center;
   gap: 16px;
   margin: 10px 0;
@@ -335,12 +339,18 @@ input:not([type='checkbox']):focus {
   border-radius: 14px;
   background: #fbfdfc;
 }
-.child-card > label {
+.child-summary {
   display: grid;
-  gap: 7px;
-  color: #385a57;
-  font-size: 0.92rem;
-  font-weight: 700;
+  gap: 5px;
+}
+.child-summary strong {
+  color: #234b51;
+  font-size: 1rem;
+}
+.child-summary span {
+  color: #58736f;
+  font-size: 0.84rem;
+  line-height: 1.45;
 }
 .checks {
   display: flex;
@@ -356,6 +366,25 @@ input:not([type='checkbox']):focus {
 }
 .checks input {
   margin: 0;
+}
+.child-eligibility {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+.child-eligibility label {
+  min-height: 46px;
+  padding: 9px 11px;
+  border: 1px solid #d3e3de;
+  border-radius: 10px;
+  background: #fff;
+  font-weight: 600;
+  line-height: 1.35;
+  transition: border-color 0.15s, background 0.15s;
+}
+.child-eligibility label:has(input:checked) {
+  border-color: #4da093;
+  background: #eaf6f2;
 }
 .alert {
   margin: 18px 0 0;
@@ -548,6 +577,9 @@ th {
     width: 100%;
   }
   .child-card {
+    grid-template-columns: 1fr;
+  }
+  .child-eligibility {
     grid-template-columns: 1fr;
   }
   .child-card .remove-button {

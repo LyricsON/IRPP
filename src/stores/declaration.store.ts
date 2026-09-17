@@ -17,8 +17,7 @@ const blank = (): TaxpayerInput => ({
 const localValue = (key: keyof ImportMetaEnv, fallback: string) => import.meta.env[key] || fallback;
 
 // Personal test values are kept in ignored .env.local, never in tracked source.
-// The three dates are only eligibility placeholders: the reference workbook
-// confirms three standard dependent-child deductions, not child birth dates.
+// The demo confirms three standard dependent-child deductions from the reference workbook.
 const demo = (): TaxpayerInput => ({
   year: 2026,
   unsupportedIncome: false,
@@ -36,12 +35,11 @@ const demo = (): TaxpayerInput => ({
   cssWithheld: localValue('VITE_IRPP_TEST_CSS_WITHHELD', '200.000'),
   family: {
     chefEligible: true,
-    children: ['2010-01-01', '2011-01-01', '2012-01-01'].map((birthDate, index) => ({
+    children: [0, 1, 2].map((index) => ({
       id: `demo-child-${index + 1}`,
-      birthDate,
+      underTwenty: true,
+      studentUnderTwentyFiveNoScholarship: false,
       hasSeparateIncome: false,
-      higherEducation: false,
-      receivesScholarship: false,
       disabled: false,
     })),
     parents: [],
